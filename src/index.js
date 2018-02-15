@@ -7,16 +7,15 @@ var deserializers = require('./serialize').deserializers
 
 inherits(WireProtocol, Duplex)
 
-function WireProtocol(defs, state) {
+function WireProtocol (defs) {
   var self = this
-  if (!(self instanceof WireProtocol)) return new WireProtocol(defs, state)
+  if (!(self instanceof WireProtocol)) return new WireProtocol(defs)
 
   Duplex.call(self)
 
   self._buffer = []
   self._bufferSize = 0
   self._currentDef = null
-  self.state = state || {}
 
   self._defs = {}
   defs.forEach(self._addDef.bind(self))
@@ -62,10 +61,10 @@ WireProtocol.prototype._parser = function (data, callback) {
 
   var deserializedData = self._currentDef.deserialize(data)
   self.emit(self._currentDef.name, deserializedData)
-  self._currentDef.done(deserializedData, self.state, function (nextDefName, nextLength) {
+  self._currentDef.done(deserializedData, function (nextDefName, nextLength) {
     if (nextDefName != null) {
       self._currentDef = self._defs[nextDefName]
-      self._parserSize = nextLength
+      self._parserSize = nextLength != null ? nextLength : self._currentDef.length
       callback()
     } else {
       self._end()
@@ -93,7 +92,6 @@ WireProtocol.prototype._end = function () {
   self._buffer = null
   self._bufferSize = null
   self._currentDef = null
-  self.state = null
   self._defs = null
 }
 

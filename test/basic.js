@@ -8,14 +8,14 @@ test('basic', function (t) {
     name: 'header', // name of message
     first: true,
     length: 9, // length in bytes)
-    done: function (data, state, next) {
+    done: function (data, next) {
       // tell the parser the next expected message
       next('body', 11)
     }
   }, {
     name: 'body',
     type: 'string',
-    done: function (done, state, next) {
+    done: function (done, next) {
       next('endM', 0)
     }
   }, {
@@ -45,14 +45,15 @@ test('basic', function (t) {
 test('cyclic', function (t) {
   t.plan(8)
 
+  var state = {cycle: 0 }
   var protocol = [{
     first: true,
     type: 'string',
     name: 'cycle',
     length: 3,
-    done: function (data, state, next) {
+    done: function (data, next) {
       state.cycle++
-      if (state.cycle < 5) {
+      if (state.cycle < 8) {
         next('cycle', 3)
       } else {
         next(null)
@@ -60,12 +61,8 @@ test('cyclic', function (t) {
     }
   }]
 
-  var wire1 = new WireProtocol(protocol, {
-    cycle: 1
-  })
-  var wire2 = new WireProtocol(protocol, {
-    cycle: 1
-  })
+  var wire1 = new WireProtocol(protocol)
+  var wire2 = new WireProtocol(protocol)
   wire1.pipe(wire2).pipe(wire1)
 
   for (var i=0; i< 4; i++) {
@@ -88,13 +85,13 @@ test('variant length on message', function (t) {
     name: 'length',
     first: true,
     length: 2, // note all payload sizes must be of length 2. (10-99) Normally you would use a fixed-length buffer instead of an object 
-    done: function (data, state, next) {
+    done: function (data, next) {
       next('payload', data)
     }
   }, {
     name: 'payload',
     type: 'object',
-    done: function (data, state, next) {
+    done: function (data, next) {
       next('length', 2)
     },
     serialize: function (data) { // disable the builtin object serialization
