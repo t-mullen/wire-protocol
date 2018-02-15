@@ -4,7 +4,7 @@
 
 Easy, fast, streaming wire protocols.
 
-Uses implicit length-prefix framing to ensure messages that may be split by the underlying transport are always processed in full by your application.
+Uses (implicit length-prefix framing)[#what-is-implicit-length-prefix-framing?] to ensure messages that may be split by the underlying transport are always processed in full by your application.
 
 Abstracts away the underlying parser.
 
@@ -55,7 +55,7 @@ wire2.on('firstMessage', function (data) { // listen for messages as events
 
 ### `var wire = new WireProtocol(protocol)`
 Creates a new endpoint to your wire protocol. This object is a Duplex stream.
-- `protocol` is an array of message definitions. See below.
+- `protocol` is an array of [message definitions](#message-definitions).
 
 ### `wire.send(name, body)`
 Sends a message with the specified name and body.
@@ -73,14 +73,14 @@ They have the following form:
 ```javascript
 {
   name: String,                           // Name of the message.
-  type: 'object' || 'string' || 'buffer', // Optional: Name of one of the default (de)serializers. (See below).
+  type: 'object' || 'string' || 'buffer', // Optional: Name of one of the default (de)serializers. (See Default Serializers below)
   first: Boolean,                         // Optional: true if this is the first message expected.
   length: Integer,                        // Optional*: The fixed length of this message (*required for the first message)
   done: function (data, next) {           // Function that is called when this message is done parsing.
     // data is the data of the message
     next(String, Integer) // next should be called with the name of the next expected message, and it's expected length
   },
-  serializer: function (data) { // Optional: Provide your own serializer
+  serializer: function (data) { // Optional: Provide your own serializer (See Custom Serializers below)
     return mySerializer(data) // MUST return a Buffer
   },
   deserializer: function (buffer) { // Optional: Provide your own deserializer
@@ -106,7 +106,16 @@ NOTE: To allow zero-length messages to be sent, `undefined` will be serialized t
 ## Custom Serializers
 Custom serializers are easy to implement. See `src/serialize.js` for examples.
 
-## Why not use protobuf?
+
+## FAQ
+### Why not use protobuf?
 Google's Protocol Buffers also implement length-prefixed wire protocols. It's great if your application is cross-language or you need a complex serialization algorithm.
 
 If you just want a Javascript wire protocol and are fine with using common serializers, use this and save yourself from compiling protobuf.
+
+### What is implicit length-prefix framing?
+When you send multiple messages over a binary stream, you can't immediately know when each messages starts and ends.
+
+One way to solve this is to use special sequences between every message called seperators. But then you have to send a seperator every message and add overhead. A better solution is to first send the length of the message (usually written in some fixed-length format like 8 bytes), then the message itself.
+
+`wire-protocol` allows **implicit** length-prefixing, since it doesn't explicity write the length of each message. Message length can often be derived from the previous message, or is fixed, and no prefix needs to be sent at all. For example, if your first message is always 8 bytes, followed by a 10 bytes message, you do not need to prefix those messages (their lengths are already known).
