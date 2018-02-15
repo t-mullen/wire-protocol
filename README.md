@@ -4,7 +4,7 @@
 
 Easy, fast, streaming wire protocols.
 
-Uses (implicit length-prefix framing)[#what-is-implicit-length-prefix-framing] to ensure messages that may be split by the underlying transport are always processed in full by your application.
+Uses [implicit length-prefix framing](#what-is-implicit-length-prefix-framing) to ensure messages that may be split by the underlying transport are always processed in full by your application.
 
 Abstracts away the underlying parser.
 
