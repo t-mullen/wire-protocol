@@ -1,0 +1,25 @@
+{
+  "name": "wire-protocol",
+  "version": "1.0.0",
+  "description": "Easy, fast streaming wire protocols.",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "standard --fix src/** && tape test/*.js",
+    "build": "browserify src/index.js -s SimpleWire | uglifyjs > dist/wire-protocol.js",
+    "test-browser": "zuul --local -- test/*.js"
+  },
+  "author": "Thomas Mullen",
+  "license": "MIT",
+  "devDependencies": {
+    "standard": "^8.6.0",
+    "tape": "^4.6.3"
+  },
+  "dependencies": {
+    "inherits": "^2.0.3",
+    "readable-stream": "^2.3.4",
+    "safe-buffer": "^5.1.1"
+  }
+}
