@@ -79,6 +79,7 @@ They have the following form:
   done: function (data, next) {           // Function that is called when this message is done parsing.
     // data is the data of the message
     next(String, Integer) // next should be called with the name of the next expected message, and it's expected length
+    // You may omit the length argument if the message has a specified fixed length
   },
   serializer: function (data) { // Optional: Provide your own serializer (See Custom Serializers below)
     return mySerializer(data) // MUST return a Buffer
