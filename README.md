@@ -4,9 +4,9 @@
 
 Easy, fast, streaming wire protocols.
 
-Uses length-prefix framing to ensure messages that may be split by the underlying transport are always processed in full by your application.
+Enables length-prefix framing to ensure messages that may be split by the underlying transport are always processed in full by your application.
 
-Abstracts away the underlying state machine, allowing you to just listen to events.
+Abstracts away the underlying parser.
 
 ## Install
 ```
