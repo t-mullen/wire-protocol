@@ -6,6 +6,15 @@ Uses length-prefix framing to ensure messages that may be split by the underlyin
 
 Abstracts away the underlying state machine, allowing you to just listen to events.
 
+## Install
+```
+npm install --save wire-protocol
+```
+or, without Browserify:
+```html
+<script src="dist/wire-protocol.js"></script>
+```
+
 ## Usage
 
 ```javascript
