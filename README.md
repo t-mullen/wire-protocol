@@ -2,7 +2,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Travis](https://travis-ci.org/RationalCoding/wire-protocol.svg?branch=master)](https://travis-ci.org/RationalCoding/wire-protocol)
 
-Easy, fast streaming wire protocols.
+Easy, fast, streaming wire protocols.
 
 Uses length-prefix framing to ensure messages that may be split by the underlying transport are always processed in full by your application.
 
