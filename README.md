@@ -109,13 +109,13 @@ Custom serializers are easy to implement. See `src/serialize.js` for examples.
 
 ## FAQ
 ### Why not use protobuf?
-Google's Protocol Buffers also implement length-prefixed wire protocols. It's great if your application is cross-language or you need a complex serialization algorithm.
+[Google's Protocol Buffers](https://github.com/google/protobuf) also implement length-prefixed wire protocols. It's great if your application is cross-language or you need a complex serialization algorithm.
 
-If you just want a Javascript wire protocol and are fine with using common serializers, use this and save yourself from compiling protobuf.
+If you just want a Javascript wire protocol, are fine with using common serializers, don't want to spend time compiling and learning protobuf, and/or want to use a convenient stream API, use this module.
 
 ### What is implicit length-prefix framing?
 When you send multiple messages over a binary stream, you can't immediately know when each messages starts and ends.
 
-One way to solve this is to use special sequences between every message called seperators. But then you have to send a seperator every message and add overhead. A better solution is to first send the length of the message (usually written in some fixed-length format like 8 bytes), then the message itself.
+One way to solve this is to use special sequences between every message called **seperators**. But then you have to send a seperator every message and add overhead. A better solution is to **first send the length of the message** (usually written in some fixed-length format like 8 bytes), then the message itself.
 
-`wire-protocol` allows **implicit** length-prefixing, since it doesn't explicity write the length of each message. Message length can often be derived from the previous message, or is fixed, and no prefix needs to be sent at all. For example, if your first message is always 8 bytes, followed by a 10 bytes message, you do not need to prefix those messages (their lengths are already known).
+`wire-protocol` allows **implicit** length-prefixing, since it doesn't explicity write the length of each message. Message length can often be **derived from the previous message**, or is **fixed**, and no prefix needs to be sent at all.
