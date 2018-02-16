@@ -26,6 +26,7 @@ var protocol = [{
   name: 'firstMessage', // name of message
   first: true,
   length: 0,
+  type: 'object',
   done: function (data, next) {
     // Tell the parser what message to expect next, and how long that message will be
     next('body', 11)
@@ -97,7 +98,7 @@ They have the following form:
 `WireProtocol` provides you with a few simple serializers. You can use them by specifying `type` in your message definition.
 
 ### `'buffer'`
-Does nothing. Expects message bodies to be `Buffer`s and outputs `Buffer`s.
+Does nothing. Expects message bodies to be `Buffer`s and outputs `Buffer`s. The default if no type is specified.
 
 ### `'string'`
 Expects message bodies to be strings and outputs strings.
@@ -109,6 +110,8 @@ NOTE: To allow zero-length messages to be sent, `undefined` will be serialized t
 
 ## Custom Serializers
 Custom serializers are easy to implement. See `src/serialize.js` for examples.
+
+Specifying a serializer option will override the default serializer. You may override only one of the options.
 
 
 ## FAQ

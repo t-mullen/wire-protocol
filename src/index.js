@@ -100,7 +100,7 @@ var RESERVED_EVENTS = ['close', 'drain', 'error', 'finish', 'pipe', 'unpipe', 'd
 WireProtocol.prototype._addDef = function (def) {
   var self = this
 
-  def.type = def.type || 'object'
+  def.type = def.type || 'buffer'
   if (def.type) {
     def.serialize = def.serialize || serializers[def.type]
     def.deserialize = def.deserialize || deserializers[def.type]
