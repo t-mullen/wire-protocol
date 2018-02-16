@@ -4,9 +4,9 @@
 
 Easy and fast streaming wire protocols.
 
-Uses [implicit length-prefix framing](#what-is-implicit-length-prefix-framing) to let you send messages over a binary stream without worrying about where one message begins and another ends.
+Lets you send messages over a binary stream without worrying about where one message begins and another ends. Uses [implicit length-prefix framing](#what-is-implicit-length-prefix-framing).
 
-Abstracts away the underlying parser, letting you forget about how your messages are buffered. Just serialize, send and forget!
+This module abstracts away the underlying parser, letting you forget about how your messages are buffered. Just serialize, send and forget!
 
 ## Install
 ```
