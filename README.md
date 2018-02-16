@@ -2,11 +2,11 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Travis](https://travis-ci.org/RationalCoding/wire-protocol.svg?branch=master)](https://travis-ci.org/RationalCoding/wire-protocol)
 
-Easy, fast, streaming wire protocols.
+Easy and fast streaming wire protocols.
 
-Uses [implicit length-prefix framing](#what-is-implicit-length-prefix-framing) to ensure messages that may be split by the underlying transport are always received in full by your application.
+Uses [implicit length-prefix framing](#what-is-implicit-length-prefix-framing) to let you send messages over a binary stream without worrying about where one message begins and another ends.
 
-Abstracts away the underlying parser.
+Abstracts away the underlying parser, letting you forget about how your messages are buffered. Just serialize, send and forget!
 
 ## Install
 ```
@@ -112,14 +112,14 @@ Custom serializers are easy to implement. See `src/serialize.js` for examples.
 
 
 ## FAQ
-### Why not use protobuf?
-[Google's Protocol Buffers](https://github.com/google/protobuf) also implement length-prefixed wire protocols. It's great if your application is cross-language or you need a complex serialization algorithm.
-
-If you just want a Javascript wire protocol, are fine with using common serializers, don't want to spend time compiling and learning protobuf, and/or want to use a convenient stream API, use this module.
-
 ### What is implicit length-prefix framing?
 When you send multiple messages over a binary stream, you can't immediately know when each messages starts and ends.
 
 One way to solve this is to use special sequences between every message called **seperators**. But then you have to send a seperator every message and add overhead. A better solution is to **first send the length of the message** (usually written in some fixed-length format like 8 bytes), then the message itself.
 
 `wire-protocol` allows **implicit** length-prefixing, since it doesn't explicity write the length of each message. Message length can often be **derived from the previous message**, or is **fixed**, and no prefix needs to be sent at all.
+
+### Why not use protobuf?
+[Google's Protocol Buffers](https://github.com/google/protobuf) also implement length-prefixed wire protocols. It's great if your application is cross-language or you need a complex serialization algorithm.
+
+If you just want a Javascript wire protocol, are fine with using common serializers, don't want to spend time compiling and learning protobuf, and/or want to use a convenient stream API, use this module.
