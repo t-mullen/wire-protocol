@@ -49,6 +49,9 @@ wire.pipe(wire2).pipe(wire)
 wire2.on('firstMessage', function (data) { // listen for messages as events
   console.log(data) // null
 })
+wire2.on('secondMessage', function (data) { // listen for messages as events
+  console.log(data) // 'hello world'
+})
 ```
 
 ## API
