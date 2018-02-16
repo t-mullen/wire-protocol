@@ -1,11 +1,13 @@
 var test = require('tape')
 var WireProtocol = require('../')
+var Buffer = require('safe-buffer').Buffer
 
 test('basic', function (t) {
   t.plan(3)
 
   var protocol = [{
     name: 'header', // name of message
+    type: 'object',
     first: true,
     length: 9, // length in bytes)
     done: function (data, next) {
@@ -38,7 +40,7 @@ test('basic', function (t) {
     t.equals(data, 'hello world')
   })
   wire2.on('endM', function (data) {
-    t.equals(data, null)
+    t.equals(Buffer.compare(data, Buffer.alloc(0)),0)
   })
 })
 
@@ -84,6 +86,7 @@ test('variant length on message', function (t) {
   var protocol = [{
     name: 'length',
     first: true,
+    type: 'object',
     length: 2, // note all payload sizes must be of length 2. (10-99) Normally you would use a fixed-length buffer instead of an object 
     done: function (data, next) {
       next('payload', data)
