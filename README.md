@@ -24,34 +24,29 @@ or, without Browserify:
 // A protocol is just a set of messages we can send
 var protocol = [{
   name: 'firstMessage', // name of message
-  first: true,
-  length: 0,
   type: 'object',
+  first: true,
+  length: 13,
   done: function (data, next) {
-    // Tell the parser what message to expect next, and how long that message will be
     next('body', 11)
   }
 }, {
   name: 'secondMessage',
-  type: 'string' // the serialization type of the message
+  type: 'string'
 }]
 
 // This module turns your protocol spec into a fully-fledged wire protocol
 var wire = new WireProtocol(protocol)
 
 // send your messages!
-wire.send('firstMessage')
+wire.send('firstMessage', {a: 'hello'})
 wire.send('secondMessage', 'hello world')
 
 // The WireProtocol object is a Duplex stream
-var wire2 = new WireProtocol(protocol)
-wire.pipe(wire2).pipe(wire)
+wire.pipe(net.Socket()).pipe(wire)
 
-wire2.on('firstMessage', function (data) { // listen for messages as events
-  console.log(data) // null
-})
-wire2.on('secondMessage', function (data) { // listen for messages as events
-  console.log(data) // 'hello world'
+wire.on('firstMessage', function (data) { // listen for messages as events
+  console.log(data) // {a: 'hello'}
 })
 ```
 
