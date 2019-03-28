@@ -28,7 +28,7 @@ var protocol = [{
   first: true,
   length: 13,
   done: function (data, next) {
-    next('body', 11)
+    next('secondMessage', 11)
   }
 }, {
   name: 'secondMessage',
