@@ -113,7 +113,7 @@ Specifying a serializer option will override the default serializer. You may ove
 ### What is implicit length-prefix framing?
 When you send multiple messages over a binary stream, you can't immediately know when each messages starts and ends.
 
-One way to solve this is to use special sequences between every message called **seperators**. But then you have to send a seperator every message and add overhead. A better solution is to **first send the length of the message** (usually written in some fixed-length format like 8 bytes), then the message itself.
+One solution is to first send the length of the message, then the message itself.
 
 <img src="https://github.com/RationalCoding/wire-protocol/raw/master/prefix.png" alt="Diagram of a Length Prefix" width=400/>
 
