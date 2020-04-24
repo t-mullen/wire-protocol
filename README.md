@@ -24,34 +24,29 @@ or, without Browserify:
 // A protocol is just a set of messages we can send
 var protocol = [{
   name: 'firstMessage', // name of message
-  first: true,
-  length: 0,
   type: 'object',
+  first: true,
+  length: 13,
   done: function (data, next) {
-    // Tell the parser what message to expect next, and how long that message will be
-    next('body', 11)
+    next('secondMessage', 11)
   }
 }, {
   name: 'secondMessage',
-  type: 'string' // the serialization type of the message
+  type: 'string'
 }]
 
 // This module turns your protocol spec into a fully-fledged wire protocol
 var wire = new WireProtocol(protocol)
 
 // send your messages!
-wire.send('firstMessage')
+wire.send('firstMessage', {a: 'hello'})
 wire.send('secondMessage', 'hello world')
 
 // The WireProtocol object is a Duplex stream
-var wire2 = new WireProtocol(protocol)
-wire.pipe(wire2).pipe(wire)
+wire.pipe(net.Socket()).pipe(wire)
 
-wire2.on('firstMessage', function (data) { // listen for messages as events
-  console.log(data) // null
-})
-wire2.on('secondMessage', function (data) { // listen for messages as events
-  console.log(data) // 'hello world'
+wire.on('firstMessage', function (data) { // listen for messages as events
+  console.log(data) // {a: 'hello'}
 })
 ```
 
@@ -118,13 +113,16 @@ Specifying a serializer option will override the default serializer. You may ove
 ### What is implicit length-prefix framing?
 When you send multiple messages over a binary stream, you can't immediately know when each messages starts and ends.
 
-One way to solve this is to use special sequences between every message called **seperators**. But then you have to send a seperator every message and add overhead. A better solution is to **first send the length of the message** (usually written in some fixed-length format like 8 bytes), then the message itself.
+One solution is to first send the length of the message, then the message itself.
 
 <img src="https://github.com/RationalCoding/wire-protocol/raw/master/prefix.png" alt="Diagram of a Length Prefix" width=400/>
 
 `wire-protocol` allows **implicit** length-prefixing, since it doesn't explicity write the length of each message. Message length can often be **derived from the previous message**, or is **fixed**, and no prefix needs to be sent at all.
 
 ### Why not use protobuf?
-[Google's Protocol Buffers](https://github.com/google/protobuf) also implement length-prefixed wire protocols. It's great if your application is cross-language or you need a complex serialization algorithm.
+[Google's Protocol Buffers](https://github.com/google/protobuf) can also implement length-prefixed wire protocols. It's great if your application is cross-language or you need a complex serialization algorithm.
 
 If you just want a Javascript wire protocol, are fine with using common serializers, don't want to spend time compiling and learning protobuf, and/or want to use a convenient stream API, use this module.
+
+It's also perfectly reasonable to use protobuf for fast serialization and message definition, while using this module for "event-style" message handling.
+
