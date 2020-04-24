@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "standard --fix src/** && tape test/*.js",
-    "build": "browserify src/index.js -s SimpleWire | uglifyjs > dist/wire-protocol.js",
+    "build": "{ npm run build-normal ;} && { npm run build-nostream ; }",
+    "build-normal": "browserify src/index.js -s WireProtocol -o dist/wire-protocol.js",
+    "build-nostream": "browserify src/browser-nostream.js -s WireProtocol -o dist/wire-protocol-nostream.js",
     "test-browser": "zuul --local -- test/*.js"
   },
   "author": "Thomas Mullen",
@@ -19,6 +21,7 @@
   },
   "dependencies": {
     "inherits": "^2.0.3",
+    "nanobus": "^4.4.0",
     "readable-stream": "^2.3.4",
     "safe-buffer": "^5.1.1"
   }

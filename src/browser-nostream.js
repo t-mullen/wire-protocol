@@ -1,14 +1,16 @@
-const Duplex = require('readable-stream').Duplex
-const Buffer = require('safe-buffer').Buffer
-
+const EventEmitter = require('nanobus')
+var Buffer = require('safe-buffer').Buffer
 const serializers = require('./serialize').serializers
 const deserializers = require('./serialize').deserializers
 
 const RESERVED_EVENTS = ['close', 'drain', 'error', 'finish', 'pipe', 'unpipe', 'data', 'end', 'readable', 'writable']
+const noop = () => { }
 
-class WireProtocol extends Duplex {
+let counter = 0
+class WireProtocol extends EventEmitter {
   constructor (defs) {
     super()
+    this.counter = counter++
 
     this._buffer = []
     this._bufferSize = 0
@@ -18,17 +20,15 @@ class WireProtocol extends Duplex {
     defs.forEach(this._addDef.bind(this))
   }
 
-  _write (chunk, enc, next) {
+  write (chunk) {
     this._bufferSize += chunk.length
     this._buffer.push(chunk)
 
-    this._continueParse(() => {
-      next(null) // signal that we are ready for more data
-    })
+    this._continueParse(noop)
   }
 
   _continueParse (callback) {
-    if (this._bufferSize >= this._parserSize) { // whilte we have enough to parse
+    if (this._bufferSize >= this._parserSize) { // while we have enough to parse
       const buffer = (this._buffer.length === 1) // concat the buffer
         ? this._buffer[0]
         : Buffer.concat(this._buffer)
@@ -46,8 +46,6 @@ class WireProtocol extends Duplex {
       callback() // done parsing, get more data
     }
   }
-
-  _read () { /* we will write when ready */ }
 
   _parser (data, callback) {
     const deserializedData = this._currentDef.deserialize(data)
@@ -70,17 +68,16 @@ class WireProtocol extends Duplex {
 
     if (data != null) {
       const serializedData = def.serialize(data)
-      this.push(serializedData)
+      this.emit('data', serializedData)
     }
   }
 
   _end () {
-    this.push(null)
-
     this._buffer = null
     this._bufferSize = null
     this._currentDef = null
     this._defs = null
+    this.emit('end')
   }
 
   _addDef (d) {
