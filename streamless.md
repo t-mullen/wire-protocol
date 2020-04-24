@@ -1,6 +1,6 @@
 # Streamless API
 
-`wire-protocol` also supports an alternative API without streaming. This is optimized for the browser, making the bundle signficantly smaller and avoiding costly ArrayBuffer-to-Buffer conversions.
+`wire-protocol` also supports an alternative API without streaming. This is optimized for the browser, making the bundle signficantly smaller and avoiding costly ArrayBuffer-to-Buffer conversions. To use: `require('wire-protocol/src/browser-nostream')` or `wire-protocol-nostream.js`.
 
 Everything is the same except how you connect `WireProtocol` objects.
 
